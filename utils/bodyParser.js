@@ -1,36 +1,56 @@
 const bodyParser = () => {
     return async (req, res, next) => {
         if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
-            const chuncks = [];
+            const chunks = [];
+            
+            const nodeReq = req.req || req;
+            
+            const contentType = req.headers['content-type'];
+            if (!contentType || !contentType.includes('application/json')) {
+                req.setBody({});
+                return next();
+            }
 
-            req.on('data', chunck => {
-                chuncks.push(chunck);
+            nodeReq.on('data', chunk => {
+                chunks.push(chunk);
             });
 
-            req.on('end', () => {
-                const body = Buffer.concat(chuncks).toString();
-
-                if(req.headers['content-type'] === 'application/json') {
-                    try {
-                        req.setBody(JSON.parse(body));
-                    }
-                    catch(error) {
+            nodeReq.on('end', () => {
+                try {
+                    if (chunks.length === 0) {
                         req.setBody({});
+                        return next();
                     }
+                    
+                    const body = Buffer.concat(chunks).toString('utf-8');
+                    
+                    if (body.trim() === '') {
+                        req.setBody({});
+                        return next();
+                    }
+                    
+                    const parsedBody = JSON.parse(body);
+                    req.setBody(parsedBody);
+                    next();
+                } catch (error) {
+                    console.error('Ошибка парсинга JSON:', error.message);
+                    req.setBody({});
+                    next();
                 }
-                else {
-                    req.setBody({raw: body});
-                }
-
-                next();
             });
 
-            req.on('error', (error) => {
-                console.error('Ошибка парсинга тела: ', error);
+            nodeReq.on('error', (error) => {
+                console.error('Ошибка чтения тела запроса:', error);
                 req.setBody({});
                 next();
             });
+
+            if (nodeReq.complete) {
+                req.setBody({});
+                next();
+            }
         } else {
+            req.setBody({});
             next();
         }
     };

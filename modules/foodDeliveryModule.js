@@ -1,8 +1,5 @@
-const path = require('path');
-const fs = require('fs');
 const FileHandler = require('../utils/fileHandler');
 const bodyParser = require('../utils/bodyParser');
-const { error } = require('console');
 
 module.exports = (app) => {
     const deliveryFileHandler = new FileHandler('data');

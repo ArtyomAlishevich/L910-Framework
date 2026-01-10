@@ -1,4 +1,3 @@
-const url = require('url');
 const querystring = require('querystring');
 
 class Request {
@@ -15,11 +14,24 @@ class Request {
     }
 
     parseUrl() {
-        const parsedUrl = url.parse(this.url);
-        this.path = parsedUrl.pathname;
-
-        if (parsedUrl.query) {
-            this.query = querystring.parse(parsedUrl.query);
+        try {
+            const urlObj = new URL(this.url, `http://${this.headers.host || 'localhost'}`);
+            this.path = urlObj.pathname;
+            
+            this.query = {};
+            urlObj.searchParams.forEach((value, key) => {
+                this.query[key] = value;
+            });
+        } catch (error) {
+            const queryIndex = this.url.indexOf('?');
+            if (queryIndex !== -1) {
+                this.path = this.url.substring(0, queryIndex);
+                const queryString = this.url.substring(queryIndex + 1);
+                this.query = querystring.parse(queryString);
+            } else {
+                this.path = this.url;
+                this.query = {};
+            }
         }
     }
 
