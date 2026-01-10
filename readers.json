@@ -1,0 +1,57 @@
+[
+{
+    "id": "1",
+    "name": "Анна Сергеевна Павлович",
+    "email": "anna.pavlovich@email.by",
+    "phone": "+375(29)123-45-67",
+    "registrationDate": "2023-05-15",
+    "address": "г. Минск, ул. Октябрьская, д. 10, кв. 25",
+    "active": true,
+    "birthDate": "1995-08-22",
+    "membershipType": "premium"
+  },
+  {
+    "id": "2",
+    "name": "Иван Михайлович Сидоренко",
+    "email": "ivan.sidorenko@email.by",
+    "phone": "+375(33)456-78-90",
+    "registrationDate": "2023-08-10",
+    "address": "г. Гродно, ул. Советская, д. 45, кв. 12",
+    "active": true,
+    "birthDate": "1988-11-30",
+    "membershipType": "standard"
+  },
+  {
+    "id": "3",
+    "name": "Мария Владимировна Иванова",
+    "email": "maria.ivanova@email.by",
+    "phone": "+375(44)567-89-01",
+    "registrationDate": "2024-01-20",
+    "address": "г. Витебск, ул. Пушкинская, д. 3, кв. 7",
+    "active": false,
+    "birthDate": "1999-03-14",
+    "membershipType": "student"
+  },
+  {
+    "id": "4",
+    "name": "Алексей Дмитриевич Кузнецов",
+    "email": "alex.kuznetsov@email.by",
+    "phone": "+375(25)678-90-12",
+    "registrationDate": "2022-11-05",
+    "address": "г. Могилев, ул. Гагарина, д. 28, кв. 33",
+    "active": true,
+    "birthDate": "1975-07-18",
+    "membershipType": "premium"
+  },
+  {
+    "id": "5",
+    "name": "Екатерина Андреевна Смирнова",
+    "email": "ekaterina.smirnova@email.by",
+    "phone": "+375(29)789-01-23",
+    "registrationDate": "2023-12-18",
+    "address": "г. Брест, ул. Ленина, д. 15, кв. 9",
+    "active": true,
+    "birthDate": "1992-04-05",
+    "membershipType": "standard"
+  }
+]
