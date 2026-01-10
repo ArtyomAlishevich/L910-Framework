@@ -68,24 +68,24 @@ class Application extends EventEmitter {
                     request.params = route.params;
                     await this.executeHandlers(route.handlers, request, response);
                 } else {
-                    response.status(404).json({ error: 'Route not found' });
+                    response.status(404).json({ error: 'Не найден Route' });
                 }
             }
             catch (error) {
-                console.error('Application error:', error);
+                console.error('Ошибка приложения: ', error);
                 
                 if (!response.hasSent) {
                     try {
                         this.emit('error', error, request, response);
                         response.status(500).json({ 
-                            error: 'Internal Server Error',
+                            error: 'Ошибка сервера',
                             message: error.message 
                         });
                     } catch (responseError) {
-                        console.error('Failed to send error response:', responseError);
+                        console.error('Ошибка в отправлении ошибки запроса: ', responseError);
                         if (!res.headersSent) {
                             res.writeHead(500, { 'Content-Type': 'text/plain' });
-                            res.end('Internal Server Error');
+                            res.end('Ошибка сервера');
                         }
                     }
                 }
