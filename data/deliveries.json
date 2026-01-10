@@ -1,0 +1,11 @@
+[
+    {
+        "id" : "1",
+        "food" : ["Картошка", "Бургер"],
+        "status" : "delivered",
+        "price" : "46.5",
+        "clientId" : "1",
+        "addres" : "г.Минск, ул.Колесникова 3",
+        "deliveryManId" : "1"
+    }
+]
