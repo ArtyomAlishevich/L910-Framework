@@ -1,8 +1,6 @@
-const path = require('path');
-const fs = require('fs');
 const FileHandler = require('../utils/fileHandler');
 const bodyParser = require('../utils/bodyParser');
-const { error } = require('console');
+
 module.exports = (app) => {
     const libraryFileHandler = new FileHandler('data');
     const readersPath = 'readers.json';
@@ -108,7 +106,7 @@ module.exports = (app) => {
     const booksPath = 'books.json';
     app.get('/books', async (req, res) => {
         try {
-            const books = libraryFileHandler.getAll(booksPath);
+            const books = await libraryFileHandler.getAll(booksPath);
             res.status(200).json({ data: books });
         } catch (error) {
             console.error('Ошибка при получении всех книг: ', error);

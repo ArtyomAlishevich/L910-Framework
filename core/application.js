@@ -68,13 +68,38 @@ class Application extends EventEmitter {
                     request.params = route.params;
                     await this.executeHandlers(route.handlers, request, response);
                 } else {
-                    response.status(400).send('Not Found');
+                    response.status(404).json({ error: 'Не найден Route' });
                 }
             }
             catch (error) {
-                this.emit('error', error, request, response);
-                response.status(500).send('Internal Server Error');
+                console.error('Ошибка приложения: ', error);
+                
+                if (!response.hasSent) {
+                    try {
+                        this.emit('error', error, request, response);
+                        response.status(500).json({ 
+                            error: 'Ошибка сервера',
+                            message: error.message 
+                        });
+                    } catch (responseError) {
+                        console.error('Ошибка в отправлении ошибки запроса: ', responseError);
+                        if (!res.headersSent) {
+                            res.writeHead(500, { 'Content-Type': 'text/plain' });
+                            res.end('Ошибка сервера');
+                        }
+                    }
+                }
             }
+        });
+
+        server.on('error', (error) => {
+            console.error('Server error:', error);
+            this.emit('error', error);
+        });
+
+        server.on('clientError', (error, socket) => {
+            console.error('Client error:', error);
+            socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
         });
 
         server.listen(port, callback);
@@ -86,7 +111,12 @@ class Application extends EventEmitter {
         const next = async () => {
             if (idx < this.middleware.length) {
                 const middleware = this.middleware[idx++];
-                await middleware(req, res, next);
+                try {
+                    await middleware(req, res, next);
+                } catch (error) {
+                    console.error('Middleware error:', error);
+                    throw error;
+                }
             }
         };
         await next();
@@ -97,7 +127,12 @@ class Application extends EventEmitter {
         const next = async () => {
             if (idx < handlers.length) {
                 const handler = handlers[idx++];
-                await handler(req, res, next);
+                try {
+                    await handler(req, res, next);
+                } catch (error) {
+                    console.error('Handler error:', error);
+                    throw error;
+                }
             }
         };
         await next();

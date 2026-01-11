@@ -1,38 +1,42 @@
 const bodyParser = () => {
-    return async (req, res, next) => {
-        if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
-            const chuncks = [];
-
-            req.on('data', chunck => {
-                chuncks.push(chunck);
-            });
-
-            req.on('end', () => {
-                const body = Buffer.concat(chuncks).toString();
-
-                if(req.headers['content-type'] === 'application/json') {
+    return (req, res, next) => {
+        const readBody = () => {
+            return new Promise((resolve) => {
+                if (!['POST', 'PUT', 'PATCH'].includes(req.method)) {
+                    req.body = {};
+                    return resolve();
+                }
+                
+                const contentType = req.headers['content-type'];
+                if (!contentType || !contentType.includes('application/json')) {
+                    req.body = {};
+                    return resolve();
+                }
+                
+                let data = '';
+                
+                req.req.on('data', (chunk) => {
+                    data += chunk.toString('utf8');
+                });
+                
+                req.req.on('end', () => {
                     try {
-                        req.setBody(JSON.parse(body));
+                        req.body = data.trim() ? JSON.parse(data) : {};
+                    } catch (error) {
+                        console.error('BodyParser Error:', error.message);
+                        req.body = {};
                     }
-                    catch(error) {
-                        req.setBody({});
-                    }
-                }
-                else {
-                    req.setBody({raw: body});
-                }
-
-                next();
+                    resolve();
+                });
+                
+                req.req.on('error', () => {
+                    req.body = {};
+                    resolve();
+                });
             });
-
-            req.on('error', (error) => {
-                console.error('Ошибка парсинга тела: ', error);
-                req.setBody({});
-                next();
-            });
-        } else {
-            next();
-        }
+        };
+        
+        readBody().then(() => next());
     };
 };
 

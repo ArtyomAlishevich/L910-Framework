@@ -114,7 +114,7 @@ module.exports = (app) => {
 
     app.get('/missions', async (req, res) => {
         try {
-            const missions = armyFileHandler.getAll(missionsPath);
+            const missions = await armyFileHandler.getAll(missionsPath);
             res.status(200).json({ data: missions });
         } catch (error) {
             console.error('Ошибка при получении всех миссий: ', error);
